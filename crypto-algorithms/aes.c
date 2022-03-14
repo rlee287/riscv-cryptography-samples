@@ -334,7 +334,7 @@ void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD key[
 		for (idx = 0; idx < last_block_length; idx += AES_BLOCK_SIZE) {
 			aes_encrypt(iv_buf, out_buf, key, keysize);
 			xor_buf(out_buf, &out[idx], AES_BLOCK_SIZE);
-			increment_iv(iv_buf, AES_BLOCK_SIZE);
+			increment_iv(iv_buf, AES_BLOCK_SIZE/2);
 		}
 	}
 
@@ -540,12 +540,12 @@ void ccm_format_payload_data(BYTE buf[], int *end_of_buf, const BYTE payload[], 
 // Substitutes a word using the AES S-Box.
 WORD SubWord(WORD word)
 {
-	unsigned int result;
+	WORD result;
 
-	result = (int)aes_sbox[(word >> 4) & 0x0000000F][word & 0x0000000F];
-	result += (int)aes_sbox[(word >> 12) & 0x0000000F][(word >> 8) & 0x0000000F] << 8;
-	result += (int)aes_sbox[(word >> 20) & 0x0000000F][(word >> 16) & 0x0000000F] << 16;
-	result += (int)aes_sbox[(word >> 28) & 0x0000000F][(word >> 24) & 0x0000000F] << 24;
+	result = (WORD)(aes_sbox[(word >> 4) & 0x0000000F][word & 0x0000000F]);
+	result += (WORD)(aes_sbox[(word >> 12) & 0x0000000F][(word >> 8) & 0x0000000F]) << 8;
+	result += (WORD)(aes_sbox[(word >> 20) & 0x0000000F][(word >> 16) & 0x0000000F]) << 16;
+	result += (WORD)(aes_sbox[(word >> 28) & 0x0000000F][(word >> 24) & 0x0000000F]) << 24;
 	return(result);
 }
 
@@ -567,8 +567,8 @@ void aes_key_setup(const BYTE key[], WORD w[], int keysize)
 	}
 
 	for (idx=0; idx < Nk; ++idx) {
-		w[idx] = ((key[4 * idx]) << 24) | ((key[4 * idx + 1]) << 16) |
-				   ((key[4 * idx + 2]) << 8) | ((key[4 * idx + 3]));
+		w[idx] = ((WORD)(key[4 * idx]) << 24) | ((WORD)(key[4 * idx + 1]) << 16) |
+				   ((WORD)(key[4 * idx + 2]) << 8) | ((WORD)(key[4 * idx + 3]));
 	}
 
 	for (idx = Nk; idx < Nb * (Nr+1); ++idx) {
