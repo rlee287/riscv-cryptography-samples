@@ -1,4 +1,4 @@
 *.o
 
-rsa_expmod_bin
-aes_bin
+rsa_sign_bin_*
+aes_bin_*

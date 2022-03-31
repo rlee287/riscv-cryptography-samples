@@ -36,7 +36,7 @@ def test_once() -> bool:
     if ct_bytes_py != ct_bytes_bin:
         print("Result mismatch")
         print("Python: ", ct_bytes_py)
-        print("Bin: ", ct_bytes_bin)
+        print("Bin:    ", ct_bytes_bin)
         return False
     
     return True
