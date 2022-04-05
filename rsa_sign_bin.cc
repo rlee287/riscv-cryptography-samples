@@ -10,7 +10,7 @@ using boost::multiprecision::signed_magnitude;
 using boost::multiprecision::checked;
 using boost::multiprecision::powm;
 
-typedef number<cpp_int_backend<0, 4096, signed_magnitude, checked> > int4096_t;
+typedef number<cpp_int_backend<2048, 2048, signed_magnitude, checked> > int4096_t;
 
 // See https://www.boost.org/doc/libs/1_78_0/libs/multiprecision/doc/html/index.html
 

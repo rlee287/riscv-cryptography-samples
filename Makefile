@@ -6,8 +6,8 @@ riscv: rsa_sign_bin_riscv aes_bin_riscv
 
 .PHONY: clean native riscv
 
-CC_OPTS = -Wall -Wno-pointer-sign -O3 -gdwarf-2 -std=c11
-CXX_OPTS = -Wall -O3 -gdwarf-2 -std=c++11
+CC_OPTS = -Wall -Wno-pointer-sign -O3 -g -std=c11
+CXX_OPTS = -Wall -O3 -g -std=c++11
 
 crypto-algorithms/native:
 	mkdir crypto-algorithms/native

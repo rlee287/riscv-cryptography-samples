@@ -14,13 +14,15 @@ import tqdm
 secure_rand_inst = SystemRandom()
 
 def test_once() -> bool:
-    key_len = secure_rand_inst.randint(1024, 2048)
+    key_len = secure_rand_inst.randint(1024, 1152)
     key = RSA.generate(key_len)
 
-    msg = get_random_bytes(secure_rand_inst.randrange(1, 1024*16))
+    msg = get_random_bytes(secure_rand_inst.randrange(1, 512))
     computed_msg_hash = hashlib.sha256(msg)
 
-    rsa_bin_result = subprocess.run(["./rsa_sign_bin_native",
+    rsa_bin_result = subprocess.run(["../riscv_tools_built/bin/spike",
+        "--log=rsa_test.txt", "--log-commits",
+        "../riscv_tools_built/riscv64-linux-gnu/bin/pk", "./rsa_sign_bin_riscv",
         str(key.n),
         str(key.d),
         b64encode(msg).decode("ascii")], capture_output=True)
@@ -32,7 +34,8 @@ def test_once() -> bool:
         return False
 
     tuple_out = tuple(rsa_bin_result.stdout.split(b"\n"))
-    hash_bin, sig_bin_str, _ = tuple_out
+    # Skip over the "bbl loader" printout
+    _, hash_bin, sig_bin_str, _ = tuple_out
     if hash_bin.decode("ascii") != computed_msg_hash.hexdigest():
         print("Hash mismatch")
         print("Python: ", repr(computed_msg_hash.hexdigest()))
@@ -58,12 +61,12 @@ def test_once() -> bool:
 
 def main():
     if not os.path.isfile("./rsa_sign_bin_native"):
-        print("rsa_sign_bin binary not found")
+        print("rsa_bin binary not found")
         return
 
     test_runs = 1000
-    pb = tqdm.trange(test_runs)
-    for i in pb:
+    #pb = tqdm.trange(test_runs)
+    for i in [0]: #pb:
         if not test_once():
             break
     else:
