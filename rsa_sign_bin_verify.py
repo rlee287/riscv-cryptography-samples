@@ -1,5 +1,6 @@
 from Cryptodome.PublicKey import RSA
 from Cryptodome.Random import get_random_bytes
+from Cryptodome.Util.number import getPrime
 import hashlib
 
 from random import SystemRandom
@@ -14,15 +15,21 @@ import tqdm
 secure_rand_inst = SystemRandom()
 
 def test_once() -> bool:
-    key_len = secure_rand_inst.randint(1024, 2048)
-    key = RSA.generate(key_len)
+    key_len = 256 #secure_rand_inst.randint(1024, 1152)
+    prime_1 = getPrime(key_len//2)
+    prime_2 = getPrime(key_len//2)
+    n = prime_1*prime_2
+    enc = 65537
+    dec = pow(enc, -1, (prime_1-1)*(prime_2-1))
+
+    #key = RSA.generate(key_len)
 
     msg = get_random_bytes(secure_rand_inst.randrange(1, 1024*16))
     computed_msg_hash = hashlib.sha256(msg)
 
     rsa_bin_result = subprocess.run(["./rsa_sign_bin_native",
-        str(key.n),
-        str(key.d),
+        str(n),
+        str(dec),
         b64encode(msg).decode("ascii")], capture_output=True)
 
     if rsa_bin_result.returncode != 0:
@@ -46,7 +53,7 @@ def test_once() -> bool:
     hash_bin_val = int.from_bytes(b16decode(hash_bin, casefold=True), 'big')
     sig_bin = int(sig_bin_str, 16)
 
-    computed_sig = pow(hash_bin_val, key.d, key.n)
+    computed_sig = pow(hash_bin_val, dec, n)
 
     if computed_sig != sig_bin:
         print("Result mismatch")
