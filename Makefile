@@ -1,8 +1,8 @@
 all: native riscv
 
-native: rsa_sign_bin_native aes_bin_native
+native: rsa_sign_bin_native aes_bin_native aes_bin_block_native
 
-riscv: rsa_sign_bin_riscv aes_bin_riscv
+riscv: rsa_sign_bin_riscv aes_bin_riscv aes_bin_block_riscv
 
 .PHONY: clean native riscv
 
@@ -36,6 +36,11 @@ rsa_sign_bin_riscv: rsa_sign_bin.cc crypto-algorithms/riscv/sha256.o crypto-algo
 aes_bin_native: aes_bin.c crypto-algorithms/native/aes.o crypto-algorithms/native/base64.o | crypto-algorithms/native
 	gcc $(CC_OPTS) -o $@ $^
 aes_bin_riscv: aes_bin.c crypto-algorithms/riscv/aes.o crypto-algorithms/riscv/base64.o | crypto-algorithms/riscv
+	riscv64-linux-gnu-gcc -static $(CC_OPTS) -o $@ $^
+
+aes_bin_block_native: aes_bin_block.c crypto-algorithms/native/aes.o crypto-algorithms/native/base64.o | crypto-algorithms/native
+	gcc $(CC_OPTS) -o $@ $^
+aes_bin_block_riscv: aes_bin_block.c crypto-algorithms/riscv/aes.o crypto-algorithms/riscv/base64.o | crypto-algorithms/riscv
 	riscv64-linux-gnu-gcc -static $(CC_OPTS) -o $@ $^
 
 clean:

@@ -3,4 +3,5 @@
 rsa_sign_bin_*
 !rsa_sign_bin_*.py
 aes_bin_*
+!aes_bin_block.c
 !aes_bin_*.py
