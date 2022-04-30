@@ -10,7 +10,7 @@ using boost::multiprecision::signed_magnitude;
 using boost::multiprecision::checked;
 using boost::multiprecision::powm;
 
-typedef number<cpp_int_backend<2048, 2048, signed_magnitude, checked> > int4096_t;
+typedef number<cpp_int_backend<256, 256, signed_magnitude, checked> > int256_t;
 
 // See https://www.boost.org/doc/libs/1_78_0/libs/multiprecision/doc/html/index.html
 
@@ -22,8 +22,8 @@ int main(int argc, char **argv) {
         print_usage();
         return 1;
     }
-    int4096_t n(argv[1]);
-    int4096_t d(argv[2]);
+    int256_t n(argv[1]);
+    int256_t d(argv[2]);
 
     size_t msg_len = base64_decode((uint8_t*) argv[3], NULL, strlen(argv[3]));
     uint8_t *msg_buf = (uint8_t*) malloc(msg_len * sizeof(uint8_t));
@@ -42,9 +42,9 @@ int main(int argc, char **argv) {
     }
     std::cout << std::endl;
 
-    int4096_t c;
+    int256_t c;
     boost::multiprecision::import_bits(c, &hash_val[0], &hash_val[256/8], 8);
-    int4096_t m = powm(c, d, n);
+    int256_t m = powm(c, d, n);
 
     std::cout << "0x" << std::hex << m << std::endl;
 
