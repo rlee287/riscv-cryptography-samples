@@ -1,8 +1,8 @@
 all: native riscv
 
-native: rsa_sign_bin_native aes_bin_native aes_bin_block_native
+native: rsa_sign_bin_native aes_bin_native aes_bin_block_native numeric_passcode_native
 
-riscv: rsa_sign_bin_riscv aes_bin_riscv aes_bin_block_riscv
+riscv: rsa_sign_bin_riscv aes_bin_riscv aes_bin_block_riscv numeric_passcode_riscv
 
 .PHONY: clean native riscv
 
@@ -43,5 +43,10 @@ aes_bin_block_native: aes_bin_block.c crypto-algorithms/native/aes.o crypto-algo
 aes_bin_block_riscv: aes_bin_block.c crypto-algorithms/riscv/aes.o crypto-algorithms/riscv/base64.o | crypto-algorithms/riscv
 	riscv64-linux-gnu-gcc -static $(CC_OPTS) -o $@ $^
 
+numeric_passcode_native: numeric_passcode.c
+	gcc $(CC_OPTS) -o $@ $^
+numeric_passcode_riscv: numeric_passcode.c
+	riscv64-linux-gnu-gcc -static $(CC_OPTS) -o $@ $^
+
 clean:
-	rm -f *.o crypto-algorithms/native/*.o crypto-algorithms/riscv/*.o aes_bin_native rsa_sign_bin_native aes_bin_riscv rsa_sign_bin_riscv
+	rm -f *.o crypto-algorithms/native/*.o crypto-algorithms/riscv/*.o aes_bin_native aes_bin_block_native numeric_passcode_native rsa_sign_bin_native aes_bin_riscv aes_bin_block_native numeric_passcode_riscv rsa_sign_bin_riscv
